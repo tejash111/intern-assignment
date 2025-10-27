@@ -83,7 +83,7 @@ if (!candidates) {
     <div className="min-h-screen bg-[#0f0f0f] text-white">
         <nav className="bg-[#0f0f0f] border-b border-neutral-800 px-6 py-4 ">
         <div className="max-w-8xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap md:flex-nowrap items-center gap-4">
             <span className="text-neutral-400 font-bold">Posted Gigs</span>
             <span className="text-neutral-600">/</span>
             <span className="text-white font-medium">Applicants</span>
