@@ -1,7 +1,7 @@
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Coins, Lock, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 
@@ -10,10 +10,15 @@ const ProfileCard = ({ candidate, onUnlock, onReject }) => {
 
   const handleCardClick = () => {
     if (candidate?.isUnlocked) {
-      navigate(`/profile/${candidate.id}`);
+      navigate(`/profile/${candidate._id}`);
     }
   };
 
+
+
+
+ 
+  
 
   const radius = 24;
   const circumference = 2 * Math.PI * radius;
@@ -25,7 +30,7 @@ const ProfileCard = ({ candidate, onUnlock, onReject }) => {
   return (
     <div
       className={`bg-card border border-neutral-800 rounded-lg p-6 transition-all ${
-        candidate?.isUnlocked ? "cursor-pointer hover:border-accent" : ""
+        candidate?.unlocked ? "cursor-pointer hover:border-accent" : ""
       }`}
       onClick={handleCardClick}
     >
@@ -37,7 +42,7 @@ const ProfileCard = ({ candidate, onUnlock, onReject }) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <h3 className="font-medium text-foreground truncate">
-                {candidate?.isUnlocked ? candidate.name : "Ashwin Kumar"}
+                { candidate.name }
               </h3>
               <span className="text-accent">•</span>
               <span className="text-accent text-base text-[#7cd4fd] font-bold">{candidate?.title}</span>
@@ -106,37 +111,27 @@ const ProfileCard = ({ candidate, onUnlock, onReject }) => {
         </div>
       </div>
 
-      <div className="flex gap-3">
-        {onReject && (
+      <div className="flex gap-3 flex-wrap md:flex-nowrap">
+        
           <Button
             variant="outline"
             className="flex-1 border-neutral-800 border-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
-            onClick={(e) => {
-              e.stopPropagation();
-              onReject(candidate.id);
-            }}
+           
           >
             <X className="w-4 h-4 my-auto mt-[1px] text-red-500" />
             Reject
           </Button>
-        )}
+    
         <Button
           className="flex-1 bg-white text-black  font-semibold"
-            onClick={(e) => {
-            e.stopPropagation();
-            if (!candidate?.isUnlocked) {
-              onUnlock && onUnlock(candidate);
-            } else {
-              navigate(`/profile/${candidate?.id}`);
-            }
-          }}
+           
         >
-          {candidate.isUnlocked ? (
-            "View Profile"
+          {candidate.unlocked ? (
+            <Link to={`/profile/${candidate?._id}`}>View Profile</Link>
           ) : (
-            <>
-              <Lock/> Unlock Profile | 🪙{candidate.unlockCost}
-            </>
+            <button onClick={onUnlock} className="flex gap-1 w-auto items-center justify-center">
+              <Lock className=""/> Unlock Profile | 🪙{candidate.unlockCost}
+            </button>
           )}
         </Button>
       </div>

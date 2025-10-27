@@ -1,16 +1,31 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { mockCandidates } from '../data/mockData'
-import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { ArrowLeft, ExternalLink, Linkedin, Briefcase, X, ChevronDown } from "lucide-react";
-import { useEffect } from "react";
+import { ArrowLeft, ExternalLink, Linkedin, Briefcase, X, ChevronDown, Loader, LoaderCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ProfileAPI } from "../services/api";
 
 
 const ProfileDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const candidate = mockCandidates.find((c) => c.id === id);
+ const [candidate, setCandidate] = useState(null);
 
+
+  useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const response = await ProfileAPI.getSingleProfile(id);
+      setCandidate(response.data.data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+  fetchProfile();
+}, [id]);
+   
+    
+  
+   
 
    const radius = 24;
   const circumference = 2 * Math.PI * radius;
@@ -18,30 +33,35 @@ const ProfileDetail = () => {
   const dashOffset = circumference * (1 - score / 100);
   const progressColor = "#47cd89";
   const bgStroke = "#e6f7ef"; 
-  useEffect(() => {
-    if (!candidate) {
-      navigate("/");
-    }
-  }, [candidate, navigate]);
-
+useEffect(() => {
+  if (candidate === null) return;
   if (!candidate) {
-    return null;
+    navigate("/");
   }
+}, [candidate, navigate]);
+
+if (candidate === null) {
+  return <div className="min-h-screen bg-background bg-[#0f0f0f] text-white flex items-center justify-center"><LoaderCircle className="animate-spin"/></div>;
+}
+if (!candidate) {
+  return null;
+}
 
   return (
     <div className="min-h-screen bg-background bg-[#0f0f0f] text-white">
      <nav className="bg-[#0f0f0f] border-b border-neutral-800 px-6 py-4">
-        <div className="max-w-9xl mx-auto flex justify-between items-center font-bold">
-          <div className="flex items-center gap-4">
+        <div className="max-w-9xl mx-auto flex flex-wrap md:flex-nowrap justify-between items-center font-bold">
+          <div className="flex  items-center gap-4 mb-3 md:mb-0">
            
-            <div className="flex items-center gap-4 font-medium">
+            <div className="flex items-center gap-4 font-medium mb-">
               <span className="text-white">Posted Gigs</span>
               <span className="text-neutral-600 text-3xl font-normal">/</span>
               <span className="text-white ">Applicants</span>
               <span className="text-neutral-600 text-3xl font-normal ">/</span>
-              <span className="text-black bg-white p-[1px] px-2 rounded-md  font-medium">View Profile</span>
+              <span className="text-black bg-white p-[1px] px-2 rounded-md text-sm md:text-md md:font-medium">View Profile</span>
             </div>
           </div>
+
           <div className="flex items-center gap-4 ">
             <span className="text-neutral-400">Candidate Status</span>
             <div className="bg-[#141414]  px-4 py-2 rounded-lg border-2 border-neutral-800 flex  gap-3 items-center">
@@ -61,10 +81,13 @@ const ProfileDetail = () => {
               <div className="flex items-start gap-4 mb-6">
                 
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2 relative">
+                  <div className="flex items-center gap-3 mb-2 relative flex-wrap md:flex-nowrap">
                         <img src="/emptybg.png" alt="" className="rounded-full w-24 object-cover" />
-                        <img src="/tick.png" alt="" className="absolute w-8 left-17 -bottom-1"/>
-                    <h1 className="text-2xl font-semibold">{candidate.name}</h1>
+                        <img src="/tick.png" alt="" className="absolute w-8 top-15 left-18 md:left-17 md:-bottom-1"/>
+
+                        <div className="">
+                         <div className="flex items-center gap-3 mb-2 relative flex-wrap md:flex-nowrap">
+                                <h1 className="text-2xl font-semibold">{candidate.name}</h1>
                       <span className="text-gray-400 ">•</span>
                     
                     <span className="text-[#7cd4fd] text-2xl font-semibold">{candidate.title}</span>
@@ -72,13 +95,22 @@ const ProfileDetail = () => {
                     {candidate.isClubMember && (
                     <Badge className="bg-gradient-to-br from-[#501091] to-[#511092] text-badge-foreground rounded px-2   py-1">♦  Club Member</Badge>
                     )} 
+                         </div>
+
+                         <div>
+  <p>
+                      {candidate.experience} | {candidate.company} | {candidate.location} |   <span className="text-emerald-500 "> • </span> Avilable Immediately
+                            
+                    </p>
+                         </div>
+                        </div>
+
+                        
+                   
 
                     
                   </div>
-                  <p>
-                      {candidate.experience} | {candidate.company} | {candidate.location} |{" "}
-                            
-                    </p>
+                
                 </div>
               </div>
 
